@@ -6,32 +6,46 @@
 
     <h1>Products</h1>
 
-    <table>
+    <form method="GET">
 
-        <tr>
+        <input type="text" name="search" placeholder="Search products..." value="{{ search }}">
 
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
+        <button type="submit">
+            Search
+        </button>
 
-        </tr>
-
-        {% for product in products %}
-
-        <tr>
-
-            <td>{{ product.name }}</td>
-
-            <td>{{ product.description }}</td>
-
-            <td>${{ product.price }}</td>
-
-        </tr>
-
-        {% endfor %}
-
-    </table>
+    </form>
 
 </div>
+
+<br>
+
+{% if products %}
+
+{% for product in products %}
+
+<div class="card">
+
+    <h2>{{ product.name }}</h2>
+
+    <p>{{ product.description }}</p>
+
+    <h3>${{ "%.2f"|format(product.price) }}</h3>
+
+</div>
+
+<br>
+
+{% endfor %}
+
+{% else %}
+
+<div class="card">
+
+    <h2>No products found.</h2>
+
+</div>
+
+{% endif %}
 
 {% endblock %}

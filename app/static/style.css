@@ -96,3 +96,35 @@ button:hover {
     opacity: .9;
 
 }
+
+.card {
+
+    margin-bottom: 20px;
+
+}
+
+h2 {
+
+    margin-top: 0;
+
+}
+
+input {
+
+    border: 1px solid #ccc;
+
+    border-radius: 5px;
+
+}
+
+button {
+
+    border-radius: 5px;
+
+}
+
+button:hover {
+
+    background: #1d4ed8;
+
+}

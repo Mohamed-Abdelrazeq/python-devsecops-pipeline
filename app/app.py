@@ -96,11 +96,19 @@ def logout():
 @app.route("/products")
 def products():
 
-    items = Product.query.all()
+    search = request.args.get("search", "").strip()
+
+    if search:
+        items = Product.query.filter(
+            Product.name.ilike(f"%{search}%")
+        ).all()
+    else:
+        items = Product.query.all()
 
     return render_template(
         "products.html",
-        products=items
+        products=items,
+        search=search
     )
 
 
