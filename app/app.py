@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import text
 from database import db
 from models import Product, User
+import subprocess
 
 app = Flask(__name__)
 
@@ -141,9 +142,37 @@ def upload():
 
 
 # ADMIN PAGE
-@app.route("/admin")
+@app.route("/admin", methods=["GET", "POST"])
 def admin():
-    return render_template("admin.html")
+
+    output = ""
+
+    if request.method == "POST":
+
+        host = request.form["host"]
+
+        # ==========================================================
+        # INTENTIONAL VULNERABILITY
+        #
+        # Vulnerability : Command Injection
+        # Severity      : Critical
+        # Detection     : Bandit / OWASP ZAP
+        # Purpose       : DevSecOps Demonstration
+        #
+        # NOTE:
+        # This command intentionally concatenates
+        # untrusted user input.
+        # NEVER do this in production.
+        # ==========================================================
+
+        command = f"ping -c 2 {host}"
+
+        output = subprocess.getoutput(command)
+
+    return render_template(
+        "admin.html",
+        output=output
+    )
 
 
 if __name__ == "__main__":

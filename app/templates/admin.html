@@ -1,8 +1,43 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <div class="card">
-    <h1>Admin Panel</h1>
-    <p>Administration features will be added in a later milestone.</p>
+
+    <h1>Admin Diagnostics</h1>
+
+    <p>
+
+        Ping a remote host to verify connectivity.
+
+    </p>
+
+    <form method="POST">
+
+        <input type="text" name="host" placeholder="example.com" required>
+
+        <br><br>
+
+        <button>
+
+            Run Diagnostic
+
+        </button>
+
+    </form>
+
 </div>
+
+{% if output %}
+
+<div class="card">
+
+    <h2>Output</h2>
+
+    <pre>{{ output }}</pre>
+
+</div>
+
+{% endif %}
+
 {% endblock %}
