@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from sqlalchemy import text
 from database import db
 from models import Product, User
 
@@ -99,11 +99,34 @@ def products():
     search = request.args.get("search", "").strip()
 
     if search:
-        items = Product.query.filter(
-            Product.name.ilike(f"%{search}%")
-        ).all()
+
+        # ==========================================================
+        # INTENTIONAL VULNERABILITY
+        #
+        # Vulnerability : SQL Injection
+        # Detection     : OWASP ZAP
+        # Severity      : High
+        # ==========================================================
+
+        query = f"""
+            SELECT *
+            FROM product
+            WHERE name LIKE '%{search}%'
+        """
+
+        items = db.session.execute(text(query)).mappings().all()
+
     else:
-        items = Product.query.all()
+
+        items = [
+            {
+                "id": p.id,
+                "name": p.name,
+                "description": p.description,
+                "price": p.price
+            }
+            for p in Product.query.all()
+        ]
 
     return render_template(
         "products.html",
