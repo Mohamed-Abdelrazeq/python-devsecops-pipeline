@@ -5,6 +5,19 @@ from database import db
 from models import Product, User
 import subprocess
 import hashlib
+import config
+
+# ==========================================================
+# INTENTIONAL VULNERABILITY
+# Fake credentials for secret scanning demonstrations.
+# ==========================================================
+
+GITHUB_TOKEN = "ghp_FAKEDEVSECOPSTOKEN1234567890"
+SLACK_WEBHOOK = "https://hooks.slack.com/services/FAKE/WEBHOOK/KEY"
+AZURE_CLIENT_SECRET = "fake-client-secret-demo"
+DOCKER_PASSWORD = "DockerPassword123!"
+# ==========================================================
+
 
 app = Flask(__name__)
 
