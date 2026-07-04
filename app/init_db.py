@@ -1,6 +1,7 @@
 from app import app
 from database import db
 from models import User, Product
+import hashlib
 
 with app.app_context():
 
@@ -13,14 +14,18 @@ with app.app_context():
             User(
                 username="admin",
                 email="admin@shopsmart.local",
-                password="admin123",
+                password=hashlib.md5(
+                    "admin123".encode()
+                ).hexdigest(),
                 role="admin"
             ),
 
             User(
                 username="john",
                 email="john@example.com",
-                password="password123"
+                password=hashlib.md5(
+                    "password123".encode()
+                ).hexdigest()
             )
         ]
 

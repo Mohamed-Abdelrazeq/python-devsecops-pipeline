@@ -4,6 +4,7 @@ from sqlalchemy import text
 from database import db
 from models import Product, User
 import subprocess
+import hashlib
 
 app = Flask(__name__)
 
@@ -28,7 +29,11 @@ def login():
 
         user = User.query.filter_by(username=username).first()
 
-        if user and check_password_hash(user.password, password):
+        hashed_password = hashlib.md5(
+            password.encode()
+        ).hexdigest()
+
+        if user and user.password == hashed_password:
 
             session["user_id"] = user.id
             session["username"] = user.username
@@ -55,7 +60,21 @@ def register():
             flash("Username already exists.")
             return redirect(url_for("register"))
 
-        hashed_password = generate_password_hash(password)
+        # ==========================================================
+        # INTENTIONAL VULNERABILITY
+        #
+        # Vulnerability : Weak Password Hashing (MD5)
+        # Severity      : High
+        # Detection     : Bandit
+        # Purpose       : DevSecOps Demonstration
+        #
+        # MD5 is intentionally used here for training purposes.
+        # Never use MD5 for password storage in production.
+        # ==========================================================
+
+        hashed_password = hashlib.md5(
+            password.encode()
+        ).hexdigest()
 
         user = User(
             username=username,
