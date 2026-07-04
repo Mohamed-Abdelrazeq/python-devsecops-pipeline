@@ -1,8 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <div class="card">
+
     <h1>Login</h1>
-    <p>Login page coming in the next milestone.</p>
+
+    <form method="POST">
+
+        <p>
+            <input type="text" name="username" placeholder="Username" required>
+        </p>
+
+        <p>
+            <input type="password" name="password" placeholder="Password" required>
+        </p>
+
+        <button type="submit">
+
+            Login
+
+        </button>
+
+    </form>
+
 </div>
+
 {% endblock %}
