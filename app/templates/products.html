@@ -1,8 +1,37 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <div class="card">
+
     <h1>Products</h1>
-    <p>Product catalog will be implemented in the next phase.</p>
+
+    <table>
+
+        <tr>
+
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+
+        </tr>
+
+        {% for product in products %}
+
+        <tr>
+
+            <td>{{ product.name }}</td>
+
+            <td>{{ product.description }}</td>
+
+            <td>${{ product.price }}</td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
 </div>
+
 {% endblock %}

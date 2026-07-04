@@ -37,3 +37,30 @@ footer {
     margin-top: 50px;
     color: #777;
 }
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    margin-top: 20px;
+
+}
+
+th,
+td {
+
+    padding: 12px;
+
+    border: 1px solid #ddd;
+
+}
+
+th {
+
+    background: #2563eb;
+
+    color: white;
+
+}

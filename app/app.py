@@ -1,9 +1,14 @@
 from flask import Flask, render_template
+from database import db
+from models import Product
 
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "CHANGE_ME_IN_PRODUCTION"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///shop.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+db.init_app(app)
 
 @app.route("/")
 def home():
@@ -27,7 +32,13 @@ def dashboard():
 
 @app.route("/products")
 def products():
-    return render_template("products.html")
+
+    items = Product.query.all()
+
+    return render_template(
+        "products.html",
+        products=items
+    )
 
 
 @app.route("/upload")
