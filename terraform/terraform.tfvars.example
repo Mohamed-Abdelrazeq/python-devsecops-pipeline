@@ -1,0 +1,19 @@
+location = "East US"
+
+resource_group_name = "rg-devsecops-demo"
+
+network_name = "vnet-devsecops"
+
+subnet_name = "snet-devsecops"
+
+network_security_group_name = "nsg-devsecops"
+
+public_ip_name = "pip-jenkins"
+
+network_interface_name = "nic-jenkins"
+
+vm_name = "vm-jenkins"
+
+admin_username = "azureuser"
+
+public_key_path = "~/.ssh/id_rsa.pub"
