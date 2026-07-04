@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, url_for, flash
+from flask import Flask, render_template, request, redirect, session, url_for, flash, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import text
 from database import db
@@ -6,6 +6,7 @@ from models import Product, User
 import subprocess
 import hashlib
 import config
+import os
 
 # ==========================================================
 # INTENTIONAL VULNERABILITY
@@ -25,8 +26,18 @@ app.config["SECRET_KEY"] = "CHANGE_ME_IN_PRODUCTION"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///shop.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+
+# UPLOAD CONFIG
+UPLOAD_FOLDER = "uploads"
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+
+# DATABASE SEEDING
 db.init_app(app)
 
+
+# ROUTES
 @app.route("/")
 def home():
     return render_template("home.html")
@@ -168,10 +179,56 @@ def products():
     )
 
 
-@app.route("/upload")
+@app.route("/upload", methods=["GET", "POST"])
 def upload():
-    return render_template("upload.html")
 
+    message = None
+
+    if request.method == "POST":
+
+        file = request.files.get("file")
+
+        if file:
+
+            # ==========================================================
+            # INTENTIONAL VULNERABILITY
+            #
+            # Vulnerability:
+            # Insecure File Upload
+            #
+            # Issues:
+            # - No extension validation
+            # - No MIME validation
+            # - No size limit
+            # - Uses original filename
+            #
+            # Purpose:
+            # DevSecOps Demonstration
+            # ==========================================================
+
+            filename = file.filename
+
+            file.save(
+                os.path.join(
+                    app.config["UPLOAD_FOLDER"],
+                    filename
+                )
+            )
+
+            message = f"{filename} uploaded successfully."
+
+    return render_template(
+        "upload.html",
+        message=message
+    )
+
+@app.route("/uploads/<path:filename>")
+def uploaded_file(filename):
+
+    return send_from_directory(
+        app.config["UPLOAD_FOLDER"],
+        filename
+    )
 
 # ADMIN PAGE
 @app.route("/admin", methods=["GET", "POST"])

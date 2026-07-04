@@ -1,8 +1,43 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <div class="card">
-    <h1>Upload</h1>
-    <p>Upload functionality coming soon.</p>
+
+    <h1>File Upload</h1>
+
+    <p>
+
+        Upload any file.
+
+    </p>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        <input type="file" name="file" required>
+
+        <br><br>
+
+        <button>
+
+            Upload
+
+        </button>
+
+    </form>
+
+    {% if message %}
+
+    <hr>
+
+    <p>
+
+        {{ message }}
+
+    </p>
+
+    {% endif %}
+
 </div>
+
 {% endblock %}
