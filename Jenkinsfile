@@ -7,26 +7,31 @@ pipeline {
             steps {
                 dir('app') {
                     sh '''
-                        python3 -m pip install --upgrade pip
-                        pip3 install -r requirements.txt
+                        rm -rf .venv
+
+                        python3 -m venv .venv
+
+                        . .venv/bin/activate
+
+                        python -m pip install --upgrade pip
+
+                        pip install -r requirements.txt
                     '''
                 }
             }
-        }       
-
-    }
-
-    post {
-        always {
-            echo 'Pipeline finished.'
         }
 
-        success {
-            echo 'Build succeeded!'
-        }
+        post {
+            always {
+                echo 'Pipeline finished.'
+            }
 
-        failure {
-            echo 'Build failed!'
+            success {
+                echo 'Build succeeded!'
+            }
+
+            failure {
+                echo 'Build failed!'
+            }
         }
-    }
 }
