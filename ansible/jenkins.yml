@@ -1,8 +1,25 @@
 ---
-- name: Test connection
+- name: Configure Jenkins Server
   hosts: jenkins
   become: true
 
   tasks:
-    - name: Ping the server
-      ansible.builtin.ping:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Upgrade installed packages
+      ansible.builtin.apt:
+        upgrade: dist
+
+    - name: Install common packages
+      ansible.builtin.apt:
+        name:
+          - git
+          - curl
+          - unzip
+          - python3-pip
+          - ca-certificates
+          - apt-transport-https
+          - software-properties-common
+        state: present
