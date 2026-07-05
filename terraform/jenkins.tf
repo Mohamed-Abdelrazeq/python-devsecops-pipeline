@@ -28,7 +28,7 @@ resource "azurerm_linux_virtual_machine" "jenkins" {
   name                = var.vm_name
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
-  size                = "Standard_B1s"
+  size                = "Standard_B4as_v2"
 
   admin_username = var.admin_username
 
