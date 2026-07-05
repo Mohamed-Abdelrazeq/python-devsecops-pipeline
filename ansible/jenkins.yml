@@ -1,0 +1,8 @@
+---
+- name: Test connection
+  hosts: jenkins
+  become: true
+
+  tasks:
+    - name: Ping the server
+      ansible.builtin.ping:
