@@ -23,7 +23,7 @@
           - apt-transport-https
           - software-properties-common
         state: present
-
+    # DOCKER SECTION
     - name: Install Docker
       ansible.builtin.apt:
         name: docker.io
@@ -40,3 +40,40 @@
         name: azureuser
         groups: docker
         append: yes
+
+    # JENKINS SECTION
+    - name: Install Java 21
+      ansible.builtin.apt:
+        name: openjdk-21-jdk
+        state: present
+
+    - name: Create keyrings directory
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
+    - name: Download Jenkins GPG key
+      ansible.builtin.shell: |
+        curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key \
+        | gpg --dearmor \
+        | tee /etc/apt/keyrings/jenkins.gpg > /dev/null
+      args:
+        creates: /etc/apt/keyrings/jenkins.gpg
+
+    - name: Add Jenkins repository
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/jenkins.gpg] https://pkg.jenkins.io/debian-stable binary/"
+        filename: jenkins
+        state: present
+
+    - name: Install Jenkins
+      ansible.builtin.apt:
+        name: jenkins
+        state: present
+
+    - name: Enable Jenkins service
+      ansible.builtin.service:
+        name: jenkins
+        state: started
+        enabled: yes
