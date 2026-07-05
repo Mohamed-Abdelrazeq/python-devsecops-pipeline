@@ -25,6 +25,29 @@ pipeline {
             }
         }
 
+        stage('Debug Tests') {
+            steps {
+                dir('app') {
+                    sh '''
+                        echo "Current directory:"
+                        pwd
+
+                        echo
+                        echo "Repository tree:"
+                        find .
+
+                        echo
+                        echo "Tests directory:"
+                        ls -la tests || true
+
+                        echo
+                        echo "Contents of test_app.py:"
+                        cat tests/test_app.py || true
+                    '''
+                }
+            }
+        }
+
         stage('Run Tests') {
             steps {
                 dir('app') {
@@ -32,7 +55,7 @@ pipeline {
                 }
             }
         }
-        
+
     }
 
     post {
