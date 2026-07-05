@@ -3,9 +3,9 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
+        stage('TEST') {
             steps {
-                checkout scm
+                sh 'echo "webhook is working"'
             }
         }
 
