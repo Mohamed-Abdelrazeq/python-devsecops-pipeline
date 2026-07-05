@@ -23,3 +23,20 @@
           - apt-transport-https
           - software-properties-common
         state: present
+
+    - name: Install Docker
+      ansible.builtin.apt:
+        name: docker.io
+        state: present
+
+    - name: Enable Docker service
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add azureuser to docker group
+      ansible.builtin.user:
+        name: azureuser
+        groups: docker
+        append: yes
