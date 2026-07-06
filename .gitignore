@@ -13,5 +13,6 @@ __pycache__/
 *.tfplan
 crash.log
 crash.*.log
+reports/
 terraform.tfvars
 terraform.tfvars.json

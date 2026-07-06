@@ -1,0 +1,41 @@
+title = "Gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "demo-github-token"
+description = "Detect demo GitHub personal access tokens"
+regex = '''ghp_[A-Za-z0-9_]{20,}'''
+keywords = [
+  "ghp_",
+]
+
+[[rules]]
+id = "demo-slack-webhook"
+description = "Detect demo Slack webhook URLs"
+regex = '''https://hooks\.slack\.com/services/[A-Za-z0-9_/-]+'''
+keywords = [
+  "hooks.slack.com/services",
+]
+
+[[rules]]
+id = "demo-hardcoded-secret-assignment"
+description = "Detect demo hardcoded secret assignments"
+regex = '''(?i)(password|secret|token|key)\s*=\s*["'][^"'\n]{8,}["']'''
+keywords = [
+  "password",
+  "secret",
+  "token",
+  "key",
+]
+
+[allowlist]
+description = "Ignore generated files and local runtime artifacts"
+paths = [
+  '''(^|/)\.venv/''',
+  '''(^|/)\.pytest_cache/''',
+  '''(^|/)__pycache__/''',
+  '''^reports/''',
+  '''^app/uploads/''',
+]

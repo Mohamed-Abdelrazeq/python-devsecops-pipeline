@@ -3,6 +3,27 @@ pipeline {
 
     stages {
 
+        stage('Secret Scan - Gitleaks') {
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    sh '''
+                        mkdir -p reports
+                        gitleaks detect \
+                            --source . \
+                            --config secret-scanning/gitleaks.toml \
+                            --report-format json \
+                            --report-path reports/gitleaks-report.json \
+                            --no-banner
+                    '''
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'reports/gitleaks-report.json', allowEmptyArchive: true
+                }
+            }
+        }
+
         stage('Create Virtual Environment') {
             steps {
                 dir('app') {
@@ -33,14 +54,16 @@ pipeline {
         
         stage('SAST - Bandit Scan') {
             steps {
-                sh '''
-                    mkdir -p reports
-                    app/.venv/bin/python -m bandit -r app \
-                        -c sast/.bandit \
-                        -x app/.venv,app/tests,app/uploads,app/__pycache__ \
-                        -f json \
-                        -o reports/bandit-report.json
-                '''
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    sh '''
+                        mkdir -p reports
+                        app/.venv/bin/python -m bandit -r app \
+                            -c sast/.bandit \
+                            -x app/.venv,app/tests,app/uploads,app/__pycache__ \
+                            -f json \
+                            -o reports/bandit-report.json
+                    '''
+                }
             }
             post {
                 always {
