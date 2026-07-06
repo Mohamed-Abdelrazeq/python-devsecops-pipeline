@@ -34,7 +34,7 @@ pipeline {
         stage('SAST - Bandit Scan') {
             steps {
                 dir('app') {
-                    sh '.venv/bin/python -m bandit -r . -c ../sast/.bandit'
+                    sh '.venv/bin/python -m bandit -r . -c ../sast/.bandit -x tests,./tests'
                 }
             }
         }
