@@ -3,6 +3,7 @@ pipeline {
 
     stages {
 
+        // TODO: REPLACE WITH TruffleHog LATER
         stage('Secret Scan - Gitleaks') {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
@@ -44,6 +45,29 @@ pipeline {
                         .venv/bin/python -m pip install --upgrade pip
                         .venv/bin/pip install -r requirements.txt
                     '''
+                }
+            }
+        }
+
+        stage('SCA - Safety') {
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    withCredentials([string(credentialsId: 'safety-api-key', variable: 'SAFETY_API_KEY')]) {
+                        sh '''
+                            mkdir -p reports
+                            PYTHONWARNINGS="ignore" app/.venv/bin/python -m safety \
+                                --stage cicd \
+                                --key "$SAFETY_API_KEY" \
+                                scan \
+                                --target app \
+                                --output json > reports/safety-report.json
+                        '''
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'reports/safety-report.json', allowEmptyArchive: true
                 }
             }
         }
