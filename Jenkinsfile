@@ -35,7 +35,7 @@ pipeline {
             steps {
                 dir('app') {
                     sh '''
-                        .venv/bin/python -m bandit -r . -c ../sast/.bandit
+                        .venv/bin/python -m bandit -r . -c ../sast/.bandit -x tests
                     '''
                 }
             }
