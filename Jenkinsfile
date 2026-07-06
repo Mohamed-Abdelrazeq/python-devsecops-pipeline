@@ -27,7 +27,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh '.venv/bin/pytest -v'
+                sh '.venv/bin/python -m pytest app/tests -v'
             }
         }
 
