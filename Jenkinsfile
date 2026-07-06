@@ -33,7 +33,19 @@ pipeline {
         
         stage('SAST - Bandit Scan') {
             steps {
-                sh 'app/.venv/bin/python -m bandit -r app -c sast/.bandit -f json -o reports/bandit-report.json'
+                sh '''
+                    mkdir -p reports
+                    app/.venv/bin/python -m bandit -r app \
+                        -c sast/.bandit \
+                        -x app/.venv,app/tests,app/uploads,app/__pycache__ \
+                        -f json \
+                        -o reports/bandit-report.json
+                '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'reports/bandit-report.json', allowEmptyArchive: true
+                }
             }
         }
 
@@ -41,7 +53,6 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'app/reports/bandit-report.json'
             echo 'Pipeline finished.'
         }
 
