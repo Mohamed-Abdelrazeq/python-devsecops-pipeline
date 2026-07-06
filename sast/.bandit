@@ -1,4 +1,13 @@
 exclude_dirs:
-  - ./tests
+  - .venv
+  - ./.venv
   - tests
+  - ./tests
+  - app/.venv
   - app/tests
+  - app/uploads
+  - app/__pycache__
+  - uploads
+  - ./uploads
+  - __pycache__
+  - ./__pycache__
