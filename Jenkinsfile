@@ -8,7 +8,9 @@ pipeline {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     sh '''
                         mkdir -p reports
-                        gitleaks detect \
+                        printf '[]\n' > reports/gitleaks-report.json
+                        /usr/local/bin/gitleaks version
+                        /usr/local/bin/gitleaks detect \
                             --source . \
                             --config secret-scanning/gitleaks.toml \
                             --report-format json \
@@ -56,6 +58,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     sh '''
+                        mkdir -p reports
                         app/.venv/bin/python -m bandit -r app \
                             -c sast/.bandit \
                             -x app/.venv,app/tests,app/uploads,app/__pycache__ \
@@ -76,6 +79,7 @@ pipeline {
     post {
         always {
             echo 'Pipeline finished.'
+            archiveArtifacts artifacts: 'reports/*.json', allowEmptyArchive: true
         }
 
         success {
