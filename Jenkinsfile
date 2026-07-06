@@ -33,7 +33,7 @@ pipeline {
         
         stage('SAST - Bandit Scan') {
             steps {
-                sh 'app/.venv/bin/python -m bandit -r app -c sast/.bandit'
+                sh 'app/.venv/bin/python -m bandit -r app -c sast/.bandit -f json -o reports/bandit-report.json'
             }
         }
 
@@ -41,6 +41,7 @@ pipeline {
 
     post {
         always {
+            archiveArtifacts artifacts: 'app/reports/bandit-report.json'
             echo 'Pipeline finished.'
         }
 
