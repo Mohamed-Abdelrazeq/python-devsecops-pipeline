@@ -30,6 +30,16 @@ pipeline {
                 sh 'app/.venv/bin/python -m pytest app/tests -v'
             }
         }
+        
+        stage('Bandit Scan') {
+            steps {
+                dir('app') {
+                    sh '''
+                       sh '.venv/bin/python -m bandit -r . -c ../sast/.bandit'
+                    '''
+                }
+            }
+        }
 
     }
 
