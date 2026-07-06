@@ -56,7 +56,6 @@ pipeline {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     sh '''
-                        mkdir -p reports
                         app/.venv/bin/python -m bandit -r app \
                             -c sast/.bandit \
                             -x app/.venv,app/tests,app/uploads,app/__pycache__ \
