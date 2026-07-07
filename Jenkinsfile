@@ -239,7 +239,7 @@ EOF
                     sleep 10
 
                     echo "Running smoke test..."
-                    curl --fail --silent --show-error http://$FLASK_PUBLIC_IP:5000/ > /dev/null
+                    curl --fail --silent --show-error http://$FLASK_HOST:5000/ > /dev/null
 
                     echo "Smoke test passed."
                 '''
