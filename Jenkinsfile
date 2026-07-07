@@ -252,16 +252,13 @@ EOF
                     sh '''
                         mkdir -p reports
 
-                        chown $(id -u):$(id -g) reports
-
                         docker run --rm \
-                            --user $(id -u):$(id -g) \
-                            -v "$(pwd)/reports:/zap/wrk" \
+                            -v "$(pwd):/zap/wrk:rw" \
                             ghcr.io/zaproxy/zaproxy:stable \
                             zap-baseline.py \
                             -t http://${FLASK_HOST}:5000 \
-                            -J zap-report.json \
-                            -r zap-report.html \
+                            -J reports/zap-report.json \
+                            -r reports/zap-report.html \
                             -I
                     '''
                 }
