@@ -98,6 +98,17 @@ pipeline {
             }
         }
 
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                    docker build \
+                        -t python-devsecops-pipeline:${BUILD_NUMBER} \
+                        -t python-devsecops-pipeline:latest \
+                        .
+                '''
+            }
+        }
+
     }
 
     post {
