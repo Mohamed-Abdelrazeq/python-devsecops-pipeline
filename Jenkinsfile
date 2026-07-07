@@ -130,7 +130,28 @@ pipeline {
             }
         }
 
-    }
+        stage('Tag Docker Image') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USERNAME',
+                        passwordVariable: 'DOCKER_PASSWORD'
+                    )
+                ]) {
+                    sh '''
+                        docker tag \
+                            python-devsecops-pipeline:${BUILD_NUMBER} \
+                            ${DOCKER_USERNAME}/python-devsecops-pipeline:${BUILD_NUMBER}
+
+                        docker tag \
+                            python-devsecops-pipeline:latest \
+                            ${DOCKER_USERNAME}/python-devsecops-pipeline:latest
+                    '''
+                }
+            }
+        }
+    }    
 
     post {
         always {
