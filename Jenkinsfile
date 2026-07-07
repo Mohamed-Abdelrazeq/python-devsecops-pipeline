@@ -272,6 +272,47 @@ EOF
                 }
             }
         }
+
+        stage('Host Compliance - OpenSCAP') {
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+
+                    sshagent(credentials: ['flask-vm-ssh']) {
+
+                        sh '''
+                            mkdir -p reports
+
+                            ssh -o StrictHostKeyChecking=no azureuser@$FLASK_HOST <<'EOF'
+
+                            mkdir -p ~/openscap-reports
+
+                            sudo oscap xccdf eval \
+                                --profile xccdf_org.ssgproject.content_profile_standard \
+                                --results ~/openscap-reports/openscap-results.xml \
+                                --report ~/openscap-reports/openscap-report.html \
+                                /usr/share/xml/scap/ssg/content/ssg-ubuntu2404-ds.xml || true
+
+                            EOF
+
+                            scp -o StrictHostKeyChecking=no \
+                                azureuser@$FLASK_HOST:~/openscap-reports/openscap-results.xml \
+                                reports/
+
+                            scp -o StrictHostKeyChecking=no \
+                                azureuser@$FLASK_HOST:~/openscap-reports/openscap-report.html \
+                                reports/
+                        '''
+                    }
+                }
+            }
+
+            post {
+                always {
+                    archiveArtifacts artifacts: 'reports/openscap-results.xml', allowEmptyArchive: true
+                    archiveArtifacts artifacts: 'reports/openscap-report.html', allowEmptyArchive: true
+                }
+            }
+        }
     }    
 
     post {
