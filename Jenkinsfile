@@ -253,13 +253,14 @@ EOF
                         mkdir -p reports
 
                         docker run --rm \
-                            -v "$(pwd):/zap/wrk:rw" \
-                            ghcr.io/zaproxy/zaproxy:stable \
-                            zap-baseline.py \
-                            -t http://${FLASK_HOST}:5000 \
-                            -J reports/zap-report.json \
-                            -r reports/zap-report.html \
-                            -I
+                        --user root \
+                        -v "$(pwd):/zap/wrk:rw" \
+                        ghcr.io/zaproxy/zaproxy:stable \
+                        zap-baseline.py \
+                        -t http://${FLASK_HOST}:5000 \
+                        -J reports/zap-report.json \
+                        -r reports/zap-report.html \
+                        -I
                     '''
                 }
             }
