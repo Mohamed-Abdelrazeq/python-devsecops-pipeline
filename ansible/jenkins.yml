@@ -117,6 +117,12 @@
         filename: jenkins
         state: present
 
+    - name: Add jenkins user to docker group
+      ansible.builtin.user:
+        name: jenkins
+        groups: docker
+        append: yes
+
     - name: Install Jenkins
       ansible.builtin.apt:
         name: jenkins
