@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        FLASK_HOST = "10.0.1.20"
+    }
+
     stages {
 
         // TODO: REPLACE WITH TruffleHog LATER

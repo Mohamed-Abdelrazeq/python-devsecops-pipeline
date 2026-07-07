@@ -56,8 +56,22 @@ resource "azurerm_network_security_group" "flask" {
   }
 
   security_rule {
-    name      = "Allow-Flask"
+    name      = "Allow-SSH-From-Jenkins"
     priority  = 110
+    direction = "Inbound"
+    access    = "Allow"
+    protocol  = "Tcp"
+
+    source_port_range      = "*"
+    destination_port_range = "22"
+
+    source_address_prefix      = azurerm_network_interface.jenkins.private_ip_address
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name      = "Allow-Flask"
+    priority  = 120
     direction = "Inbound"
     access    = "Allow"
     protocol  = "Tcp"
