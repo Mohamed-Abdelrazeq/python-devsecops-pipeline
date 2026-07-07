@@ -207,34 +207,26 @@ pipeline {
                         )
                     ]) {
 
-                        sh '''
-                            ssh -o StrictHostKeyChecking=no azureuser@$FLASK_HOST <<EOF
+                        sh """
+                        ssh -o StrictHostKeyChecking=no azureuser@${FLASK_HOST} <<EOF
+                        set -e
 
-                            set -e
+                        echo "Pulling image..."
+                        docker pull ${DOCKERHUB_USERNAME}/python-devsecops-pipeline:${BUILD_NUMBER}
 
-                            echo "Pulling image..."
-                            docker pull ${DOCKERHUB_USERNAME}/python-devsecops-pipeline:${BUILD_NUMBER}
+                        echo "Removing previous deployment (if any)..."
+                        docker rm -f flask-app 2>/dev/null || true
 
-                            echo "Stopping existing container..."
-                            docker stop flask-app || true
+                        echo "Starting new container..."
+                        docker run -d \
+                            --name flask-app \
+                            --restart unless-stopped \
+                            -p 5000:5000 \
+                            ${DOCKERHUB_USERNAME}/python-devsecops-pipeline:${BUILD_NUMBER}
 
-                            echo "Removing existing container..."
-                            docker rm flask-app || true
-
-                            echo "Starting new container..."
-                            docker run -d \
-                                --name flask-app \
-                                --restart unless-stopped \
-                                -p 5000:5000 \
-                                ${DOCKERHUB_USERNAME}/python-devsecops-pipeline:${BUILD_NUMBER}
-
-                            echo "Cleaning up unused images..."
-                            docker image prune -f
-
-                            echo "Deployment completed successfully."
-
-                            EOF
-                        '''
+                        echo "Deployment completed successfully."
+                        EOF
+                        """
                     }
                 }
             }
