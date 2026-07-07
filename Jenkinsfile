@@ -3,6 +3,9 @@ pipeline {
 
     environment {
         FLASK_HOST = "10.0.1.20"
+        FLASK_PUBLIC_IP = "135.225.34.112"
+        IMAGE_NAME = "${DOCKERHUB_USERNAME}/python-devsecops-pipeline"
+        IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
     stages {
@@ -189,6 +192,65 @@ pipeline {
                         docker push ${DOCKER_USERNAME}/python-devsecops-pipeline:latest
                     '''
                 }
+            }
+        }
+
+        stage('Deploy to Flask VM') {
+            steps {
+                sshagent(credentials: ['flask-vm-ssh']) {
+
+                    withCredentials([
+                        usernamePassword(
+                            credentialsId: 'dockerhub-creds',
+                            usernameVariable: 'DOCKERHUB_USERNAME',
+                            passwordVariable: 'DOCKERHUB_PASSWORD'
+                        )
+                    ]) {
+
+                        sh '''
+                            ssh -o StrictHostKeyChecking=no azureuser@$FLASK_HOST <<EOF
+
+                            set -e
+
+                            echo "Pulling image..."
+                            docker pull ${DOCKERHUB_USERNAME}/python-devsecops-pipeline:${BUILD_NUMBER}
+
+                            echo "Stopping existing container..."
+                            docker stop flask-app || true
+
+                            echo "Removing existing container..."
+                            docker rm flask-app || true
+
+                            echo "Starting new container..."
+                            docker run -d \
+                                --name flask-app \
+                                --restart unless-stopped \
+                                -p 5000:5000 \
+                                ${DOCKERHUB_USERNAME}/python-devsecops-pipeline:${BUILD_NUMBER}
+
+                            echo "Cleaning up unused images..."
+                            docker image prune -f
+
+                            echo "Deployment completed successfully."
+
+                            EOF
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Smoke Test') {
+            steps {
+                sh '''
+                    echo "Waiting for application to start..."
+                    sleep 10
+
+                    echo "Running smoke test..."
+                    curl --fail --silent --show-error http://$FLASK_PUBLIC_IP:5000/ > /dev/null
+
+                    echo "Smoke test passed."
+                '''
             }
         }
     }    
