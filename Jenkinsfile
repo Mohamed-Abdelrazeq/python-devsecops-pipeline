@@ -231,6 +231,20 @@ EOF
                 }
             }
         }
+
+        stage('Smoke Test') {
+            steps {
+                sh '''
+                    echo "Waiting for application to start..."
+                    sleep 10
+
+                    echo "Running smoke test..."
+                    curl --fail --silent --show-error http://$FLASK_PUBLIC_IP:5000/ > /dev/null
+
+                    echo "Smoke test passed."
+                '''
+            }
+        }
     }    
 
     post {
