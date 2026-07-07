@@ -290,9 +290,9 @@ EOF
                                 --profile xccdf_org.ssgproject.content_profile_standard \
                                 --results ~/openscap-reports/openscap-results.xml \
                                 --report ~/openscap-reports/openscap-report.html \
-                                /usr/share/xml/scap/ssg/content/ssg-ubuntu2404-ds.xml || true
+                                /usr/share/xml/scap/ssg/content/ssg-ubuntu2204-ds.xml || true
 
-                            EOF
+EOF
 
                             scp -o StrictHostKeyChecking=no \
                                 azureuser@$FLASK_HOST:~/openscap-reports/openscap-results.xml \
