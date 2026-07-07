@@ -191,8 +191,8 @@ pipeline {
 
     post {
         always {
+            sh 'docker logout || true'
             echo 'Pipeline finished.'
-            archiveArtifacts artifacts: 'reports/*.json', allowEmptyArchive: true
         }
 
         success {
