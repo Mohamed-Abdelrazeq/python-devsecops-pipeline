@@ -70,7 +70,7 @@ resource "azurerm_network_security_group" "flask" {
   }
 
   security_rule {
-    name      = "Allow-Flask"
+    name      = "Allow-Flask-From-Local"
     priority  = 120
     direction = "Inbound"
     access    = "Allow"
@@ -84,7 +84,7 @@ resource "azurerm_network_security_group" "flask" {
   }
 
   security_rule {
-    name      = "Allow-Flask"
+    name      = "Allow-Flask-From-Jenkins"
     priority  = 130
     direction = "Inbound"
     access    = "Allow"

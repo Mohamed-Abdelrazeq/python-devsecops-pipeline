@@ -245,6 +245,32 @@ EOF
                 '''
             }
         }
+
+        stage('DAST - OWASP ZAP') {
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    sh '''
+                        mkdir -p reports
+
+                        docker run --rm \
+                            -v "$(pwd)/reports:/zap/wrk" \
+                            ghcr.io/zaproxy/zaproxy:stable \
+                            zap-baseline.py \
+                            -t http://${FLASK_HOST}:5000 \
+                            -J zap-report.json \
+                            -r zap-report.html \
+                            -I
+                    '''
+                }
+            }
+
+            post {
+                always {
+                    archiveArtifacts artifacts: 'reports/zap-report.json', allowEmptyArchive: true
+                    archiveArtifacts artifacts: 'reports/zap-report.html', allowEmptyArchive: true
+                }
+            }
+        }
     }    
 
     post {
