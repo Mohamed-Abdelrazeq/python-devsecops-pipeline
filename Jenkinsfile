@@ -252,7 +252,10 @@ EOF
                     sh '''
                         mkdir -p reports
 
+                        chown $(id -u):$(id -g) reports
+
                         docker run --rm \
+                            --user $(id -u):$(id -g) \
                             -v "$(pwd)/reports:/zap/wrk" \
                             ghcr.io/zaproxy/zaproxy:stable \
                             zap-baseline.py \
