@@ -109,6 +109,27 @@ pipeline {
             }
         }
 
+        stage('Container Security - Trivy') {
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    sh '''
+                        mkdir -p reports
+
+                        trivy image \
+                            --format json \
+                            --output reports/trivy-report.json \
+                            python-devsecops-pipeline:${BUILD_NUMBER}
+                    '''
+                }
+            }
+
+            post {
+                always {
+                    archiveArtifacts artifacts: 'reports/trivy-report.json', allowEmptyArchive: true
+                }
+            }
+        }
+
     }
 
     post {
