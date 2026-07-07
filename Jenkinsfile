@@ -225,7 +225,7 @@ pipeline {
                             ${DOCKERHUB_USERNAME}/python-devsecops-pipeline:${BUILD_NUMBER}
 
                         echo "Deployment completed successfully."
-                        '
+EOF
                         """
                     }
                 }
