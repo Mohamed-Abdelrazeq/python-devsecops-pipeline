@@ -169,6 +169,24 @@ pipeline {
                 }
             }
         }
+
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USERNAME',
+                        passwordVariable: 'DOCKER_PASSWORD'
+                    )
+                ]) {
+                    sh '''
+                        docker push ${DOCKER_USERNAME}/python-devsecops-pipeline:${BUILD_NUMBER}
+
+                        docker push ${DOCKER_USERNAME}/python-devsecops-pipeline:latest
+                    '''
+                }
+            }
+        }
     }    
 
     post {
