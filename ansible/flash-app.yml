@@ -1,0 +1,54 @@
+---
+- name: Configure Flask Application Server
+  hosts: flask
+  become: true
+
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Upgrade installed packages
+      ansible.builtin.apt:
+        upgrade: dist
+
+    - name: Install common packages
+      ansible.builtin.apt:
+        name:
+          - git
+          - curl
+          - unzip
+          - ca-certificates
+          - apt-transport-https
+          - software-properties-common
+        state: present
+
+    #################################################
+    # Docker
+    #################################################
+
+    - name: Install Docker
+      ansible.builtin.apt:
+        name: docker.io
+        state: present
+
+    - name: Enable Docker service
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add azureuser to docker group
+      ansible.builtin.user:
+        name: azureuser
+        groups: docker
+        append: yes
+
+    - name: Verify Docker installation
+      ansible.builtin.command: docker --version
+      register: docker_version
+      changed_when: false
+
+    - name: Show Docker version
+      ansible.builtin.debug:
+        var: docker_version.stdout
