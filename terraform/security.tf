@@ -28,7 +28,7 @@ resource "azurerm_network_security_group" "jenkins" {
     source_port_range      = "*"
     destination_port_range = "8080"
 
-    source_address_prefix      = var.allowed_ssh_ip
+    source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
 
