@@ -85,7 +85,7 @@ resource "azurerm_network_security_group" "flask" {
 
   security_rule {
     name      = "Allow-Flask"
-    priority  = 120
+    priority  = 130
     direction = "Inbound"
     access    = "Allow"
     protocol  = "Tcp"
