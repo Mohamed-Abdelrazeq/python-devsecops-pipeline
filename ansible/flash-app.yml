@@ -52,3 +52,12 @@
     - name: Show Docker version
       ansible.builtin.debug:
         var: docker_version.stdout
+
+    - name: Install OpenSCAP
+      ansible.builtin.apt:
+        name:
+          - openscap-scanner
+          - ssg-base
+          - ssg-debderived
+        state: present
+        update_cache: yes
