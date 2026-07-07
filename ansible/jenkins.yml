@@ -133,3 +133,42 @@
         name: jenkins
         state: started
         enabled: yes
+
+    # TRIVIY SECTION
+    - name: Create keyrings directory for Trivy
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
+    - name: Download Trivy GPG key
+      ansible.builtin.get_url:
+        url: https://aquasecurity.github.io/trivy-repo/deb/public.key
+        dest: /tmp/trivy.key
+        mode: "0644"
+
+    - name: Dearmor Trivy GPG key
+      ansible.builtin.command:
+        cmd: gpg --dearmor -o /etc/apt/keyrings/trivy.gpg /tmp/trivy.key
+        creates: /etc/apt/keyrings/trivy.gpg
+
+    - name: Add Trivy repository
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main"
+        filename: trivy
+        state: present
+
+    - name: Install Trivy
+      ansible.builtin.apt:
+        name: trivy
+        update_cache: yes
+        state: present
+
+    - name: Verify Trivy installation
+      ansible.builtin.command: trivy --version
+      register: trivy_version
+      changed_when: false
+
+    - name: Show installed Trivy version
+      ansible.builtin.debug:
+        var: trivy_version.stdout
