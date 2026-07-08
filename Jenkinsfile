@@ -314,14 +314,14 @@ EOF
             }
         }
 
-        stage('Upload to DefectDojo') {
+        stage('DefectDojo') {
             environment {
                 DEFECTDOJO_URL = 'http://127.0.0.1:9090'
                 ENGAGEMENT_ID  = '1'
             }
 
             steps {
-                withCredentials([string(credentialsId: 'DEFECTDOJO_API_TOKEN', variable: 'DD_TOKEN')]) {
+                withCredentials([string(credentialsId: 'defectdojo-api-key', variable: 'DD_TOKEN')]) {
                     sh '''
                         upload_scan () {
                             FILE=$1
