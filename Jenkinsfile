@@ -343,12 +343,12 @@ EOF
                             fi
                         }
 
-                        upload_scan gitleaks-report.json "Gitleaks Scan"
-                        upload_scan trivy-report.json "Trivy Scan"
-                        upload_scan bandit-report.json "Bandit Scan"
-                        upload_scan safety-report.json "Safety Scan"
-                        upload_scan openscap-results.xml "OpenSCAP"
-                        upload_scan zap-report.json "ZAP Scan"
+                        upload_scan reports/gitleaks-report.json "Gitleaks Scan"
+                        upload_scan reports/trivy-report.json "Trivy Scan"
+                        upload_scan reports/bandit-report.json "Bandit Scan"
+                        upload_scan reports/safety-report.json "Safety Scan"
+                        upload_scan reports/openscap-results.xml "OpenSCAP"
+                        upload_scan reports/zap-report.json "ZAP Scan"
                     '''
                 }
             }
