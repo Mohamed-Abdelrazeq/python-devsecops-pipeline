@@ -54,11 +54,6 @@
       ansible.builtin.apt:
         update_cache: yes
 
-    - name: Remove legacy Docker Compose
-      ansible.builtin.apt:
-        name: docker-compose
-        state: absent
-
     - name: Install Docker Compose plugin
       ansible.builtin.apt:
         name: docker-compose-plugin
@@ -219,3 +214,27 @@
         var: trivy_version.stdout
 
     # DEFECTDOJO SECTION
+    - name: Check if DefectDojo is already cloned
+      ansible.builtin.stat:
+        path: /opt/defectdojo/.git
+      register: defectdojo_repo
+
+    - name: Clone DefectDojo repository
+      ansible.builtin.git:
+        repo: https://github.com/DefectDojo/django-DefectDojo.git
+        dest: /opt/defectdojo
+        version: master
+      when: not defectdojo_repo.stat.exists
+
+    - name: Start DefectDojo on port 9090
+      ansible.builtin.command:
+        cmd: docker compose up -d
+        chdir: /opt/defectdojo
+      environment:
+        DD_PORT: "9090"
+
+    - name: Wait for DefectDojo to become available
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: 9090
+        timeout: 600
