@@ -314,7 +314,7 @@ EOF
             }
         }
 
-        stage('DefectDojo') {
+       stage('DefectDojo') {
             environment {
                 DEFECTDOJO_URL = 'http://127.0.0.1:9090'
                 ENGAGEMENT_ID  = '1'
@@ -324,11 +324,11 @@ EOF
                 withCredentials([string(credentialsId: 'defectdojo-api-key', variable: 'DD_TOKEN')]) {
                     sh '''
                         upload_scan () {
-                            FILE=$1
-                            TYPE=$2
+                            FILE="$1"
+                            TYPE="$2"
 
                             if [ -f "$FILE" ]; then
-                                echo "Uploading $FILE..."
+                                echo "Uploading $FILE as $TYPE"
 
                                 curl -s -X POST "$DEFECTDOJO_URL/api/v2/import-scan/" \
                                 -H "Authorization: Token $DD_TOKEN" \
@@ -344,9 +344,11 @@ EOF
                         }
 
                         upload_scan gitleaks-report.json "Gitleaks Scan"
-                        upload_scan dependency-check-report.xml "Dependency Check Scan"
-                        upload_scan trivy-fs-report.json "Trivy Scan"
-                        upload_scan trivy-image-report.json "Trivy Scan"
+                        upload_scan trivy-report.json "Trivy Scan"
+                        upload_scan bandit-report.json "Bandit Scan"
+                        upload_scan safety-report.json "Safety Scan"
+                        upload_scan openscap-results.xml "OpenSCAP"
+                        upload_scan zap-report.json "ZAP Scan"
                     '''
                 }
             }
