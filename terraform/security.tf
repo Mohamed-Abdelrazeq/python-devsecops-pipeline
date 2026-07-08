@@ -14,7 +14,7 @@ resource "azurerm_network_security_group" "jenkins" {
     source_port_range      = "*"
     destination_port_range = "22"
 
-    source_address_prefix      = var.allowed_ssh_ip
+    source_address_prefix      = var.admin_ip
     destination_address_prefix = "*"
   }
 
@@ -29,6 +29,20 @@ resource "azurerm_network_security_group" "jenkins" {
     destination_port_range = "8080"
 
     source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name      = "Allow-DefectDojo"
+    priority  = 120
+    direction = "Inbound"
+    access    = "Allow"
+    protocol  = "Tcp"
+
+    source_port_range      = "*"
+    destination_port_range = "9090"
+
+    source_address_prefix      = var.admin_ip
     destination_address_prefix = "*"
   }
 
@@ -51,7 +65,7 @@ resource "azurerm_network_security_group" "flask" {
     source_port_range      = "*"
     destination_port_range = "22"
 
-    source_address_prefix      = var.allowed_ssh_ip
+    source_address_prefix      = var.admin_ip
     destination_address_prefix = "*"
   }
 
@@ -79,7 +93,7 @@ resource "azurerm_network_security_group" "flask" {
     source_port_range      = "*"
     destination_port_range = "5000"
 
-    source_address_prefix      = var.allowed_ssh_ip
+    source_address_prefix      = var.admin_ip
     destination_address_prefix = "*"
   }
 

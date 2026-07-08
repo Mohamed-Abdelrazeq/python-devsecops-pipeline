@@ -18,4 +18,4 @@ admin_username = "azureuser"
 
 public_key_path = "~/.ssh/id_rsa.pub"
 
-allowed_ssh_ip = "XX.XX.XX.XX/32"
+admin_ip = "XX.XX.XX.XX/32"

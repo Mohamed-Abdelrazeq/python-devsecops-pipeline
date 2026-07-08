@@ -48,8 +48,8 @@ variable "public_key_path" {
   type        = string
 }
 
-variable "allowed_ssh_ip" {
-  description = "Public IP allowed to SSH into the VM"
+variable "admin_ip" {
+  description = "Public IP of admin machine"
   type        = string
 }
 
