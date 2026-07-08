@@ -32,9 +32,45 @@
           - software-properties-common
         state: present
     # DOCKER SECTION
-    - name: Install Docker
+    - name: Create Docker keyring directory
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
+    - name: Download Docker GPG key
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: "0644"
+
+    - name: Add Docker official repository
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        filename: docker
+        state: present
+
+    - name: Update apt cache after adding Docker repository
       ansible.builtin.apt:
-        name: docker.io
+        update_cache: yes
+
+    - name: Remove legacy Docker Compose
+      ansible.builtin.apt:
+        name: docker-compose
+        state: absent
+
+    - name: Install Docker Compose plugin
+      ansible.builtin.apt:
+        name: docker-compose-plugin
+        state: present
+
+    - name: Install Docker Engine
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
         state: present
 
     - name: Enable Docker service
@@ -48,6 +84,15 @@
         name: azureuser
         groups: docker
         append: yes
+
+    - name: Verify Docker Compose plugin
+      ansible.builtin.command: docker compose version
+      register: compose_version
+      changed_when: false
+
+    - name: Show Docker Compose version
+      ansible.builtin.debug:
+        var: compose_version.stdout
 
     # GITLEAKS SECTION
     - name: Set Gitleaks architecture
@@ -172,3 +217,5 @@
     - name: Show installed Trivy version
       ansible.builtin.debug:
         var: trivy_version.stdout
+
+    # DEFECTDOJO SECTION
