@@ -306,6 +306,45 @@ EOF
                 }
             }
 
+
+            stage('Upload to DefectDojo') {
+                environment {
+                    DEFECTDOJO_URL = 'http://127.0.0.1:9090'
+                    ENGAGEMENT_ID  = '1'
+                }
+
+                steps {
+                    withCredentials([string(credentialsId: 'defectdojo-api-key', variable: 'DD_TOKEN')]) {
+                        sh '''
+                            upload_scan () {
+                                FILE=$1
+                                TYPE=$2
+
+                                if [ -f "$FILE" ]; then
+                                    echo "Uploading $FILE..."
+
+                                    curl -s -X POST "$DEFECTDOJO_URL/api/v2/import-scan/" \
+                                    -H "Authorization: Token $DD_TOKEN" \
+                                    -F "engagement=$ENGAGEMENT_ID" \
+                                    -F "scan_type=$TYPE" \
+                                    -F "file=@$FILE" \
+                                    -F "active=true" \
+                                    -F "verified=true" \
+                                    -F "close_old_findings=false"
+                                else
+                                    echo "$FILE not found. Skipping."
+                                fi
+                            }
+
+                            upload_scan gitleaks-report.json "Gitleaks Scan"
+                            upload_scan dependency-check-report.xml "Dependency Check Scan"
+                            upload_scan trivy-fs-report.json "Trivy Scan"
+                            upload_scan trivy-image-report.json "Trivy Scan"
+                        '''
+                    }
+                }
+            }
+
             post {
                 always {
                     archiveArtifacts artifacts: 'reports/openscap-results.xml', allowEmptyArchive: true
